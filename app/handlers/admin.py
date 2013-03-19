@@ -103,8 +103,17 @@ def POSTING(message, list_name=None, action=None, host=None):
     action = action.lower() if action else None
     host = host.lower() if host else None
 
-    if action == 'unsubscribe' or\
-            message.get('subject','').lower() == 'unsubscribe':
+    def _find_unsubscribe(s):
+        s = s.strip().lower().split(' ', 5)
+        if len(s) > 4: #Too many words, not n00b enough
+            return False
+        return 'unsubscribe' in s
+
+    unsubscribing = (action == 'unsubscribe' or
+                        _find_unsubscribe(message.get('subject','')) or
+                        _find_unsubscribe(message.body()[:100]))
+
+    if unsubscribing:
         action = "unsubscribe from"
         CONFIRM.send(relay, list_name, message, 'mail/confirmation.msg',
                           locals())
