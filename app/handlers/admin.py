@@ -103,7 +103,8 @@ def POSTING(message, list_name=None, action=None, host=None):
     action = action.lower() if action else None
     host = host.lower() if host else None
 
-    if action == 'unsubscribe':
+    if action == 'unsubscribe' or\
+            message.get('subject','').lower() == 'unsubscribe':
         action = "unsubscribe from"
         CONFIRM.send(relay, list_name, message, 'mail/confirmation.msg',
                           locals())
